@@ -1,20 +1,34 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import React, { useEffect } from "react";
+import { NavigationContainer } from "@react-navigation/native";
+import { createStackNavigator } from "@react-navigation/stack";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import SignIn from "./screens/Signin";
+import SignUp from "./screens/Signup";
+import Home from "./screens/Home";
+const Stack = createStackNavigator();
 
-export default function App() {
+const App = () => {
+  useEffect(() => {
+    const checkToken = async () => {
+      const token = await AsyncStorage.getItem("token");
+      if (token) {
+        // Navigate directly to Home if token exists
+        navigation.navigate("Home");
+      }
+    };
+
+    checkToken();
+  }, []);
+
   return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
+    <NavigationContainer>
+      <Stack.Navigator initialRouteName="SignIn">
+        <Stack.Screen name="SignIn" component={SignIn} />
+        <Stack.Screen name="Home" component={Home} />
+        <Stack.Screen name="SignUp" component={SignUp} />
+      </Stack.Navigator>
+    </NavigationContainer>
   );
-}
+};
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
+export default App;
